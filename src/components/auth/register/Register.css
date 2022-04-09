@@ -1,0 +1,51 @@
+.styleErrors {
+    color: red;
+    font-size: 12px;
+}
+
+.containerForm{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.divForm{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.labelForm{
+    font-family: revert;
+    font-weight: bold;
+}
+
+.boxTitle{
+    /* text-align: center; */
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+}
+
+.title{
+    color: darkslategrey;
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    padding-top: 15px;
+    text-align: center;
+}
+
+.btn{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card{
+    width: 60%;
+}
+
+.headerForm{
+    background-color: gray;
+    text-align: center;
+}

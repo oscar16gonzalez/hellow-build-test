@@ -1,0 +1,85 @@
+.container{
+    padding-top: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.containerCard{
+    /* padding-top: 20%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.styleErrors {
+    color: red;
+    font-size: 12px;
+}
+
+.containerForm{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.divForm{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.labelForm{
+    font-family: revert;
+    font-weight: bold;
+}
+
+.boxTitle{
+    /* text-align: center; */
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.title{
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    padding-top: 15px;
+    text-align: center;
+}
+
+.title-login{
+    font-size: 55px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    text-align: center;
+    padding-top: 5%;
+}
+
+.btn{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card{
+    width: 70%;
+}
+
+.card-container{
+    width: 100%;
+}
+
+.containerImage{
+    text-align: center;
+    background-color:#1B2631 ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 6rem; */
+    background-clip: content-box;
+    border-top-left-radius: 100%
+    /* border-radius: 10px; */
+
+}
