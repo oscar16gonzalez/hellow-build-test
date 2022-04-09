@@ -4,126 +4,14 @@ import './Register.css';
 import { useFormik } from 'formik';
 import logo from './user.png';
 
-
+import { useNavigate } from 'react-router-dom';
 
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 
-// const Resgister = () => {
-//     return (
-//         <>
-//         <div className='boxTitle'>
-//             <h1 className='title'>CREATE USER</h1>
-//         </div>
-//             <div>
-//                 <Formik
-//                     initialValues={{ email: '', password: '', name: '', cel:'' }}
-//                     validate={values => {
-//                         const errors = {};
-//                         if (!values.email) {
-//                             errors.email = 'Email address is Required';
-//                         } if (
-//                             !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-//                         ) {
-//                             errors.email = 'Invalid email address';
-//                         }
-//                         if (!values.password) {
-//                             errors.password = 'Password is Required';
-//                         }
-//                         if(!values.name) {
-//                             errors.name = 'Full Name is Required';
-//                         }
-//                         if(!values.cel) {
-//                             errors.cel = 'Cel is Required';
-//                         }
-//                         return errors;
-//                     }}
-//                     onSubmit={(values, { setSubmitting }) => {
-//                         setTimeout(() => {
-//                             alert('user created successfully');
-//                             alertify.alert('Success', 'User created successfully!', function(){ 
-//                                 alertify.success('User Created !'); 
-//                                 console.log(values);
-//                               });
-//                             setSubmitting(false);
-//                         }, 400);
-//                     }}
-//                 >
-//                     {({
-//                         values,
-//                         errors,
-//                         touched,
-//                         handleChange,
-//                         handleBlur,
-//                         handleSubmit,
-//                         isSubmitting,
-//                         /* and other goodies */
-//                     }) => (
-//                         <form onSubmit={handleSubmit}>
-//                             <div className="form-floating mb-3 divForm">
-//                                 <input type="text" className="form-control" id="floatingInput"
-//                                     name="name"
-//                                     onChange={handleChange}
-//                                     onBlur={handleBlur}
-//                                     value={values.name} />
-//                                 <label for="floatingInput">Full Name</label>
-//                             </div>
-//                             <label className='styleErrors divForm'>
-//                                 {errors.name && touched.name && errors.name}
-//                             </label>
-
-//                             <div className="form-floating mb-3 divForm">
-//                                 <input type="email" className="form-control" id="floatingInput"
-//                                     name="email"
-//                                     onChange={handleChange}
-//                                     onBlur={handleBlur}
-//                                     value={values.email} />
-//                                 <label for="floatingInput">Email address</label>
-//                             </div>
-//                             <label className='styleErrors divForm'>
-//                                 {errors.email && touched.email && errors.email}
-//                             </label>
-
-//                             <div className="form-floating mb-3 divForm">
-//                                 <input type="number" className="form-control" id="floatingInput"
-//                                     name="cel"
-//                                     onChange={handleChange}
-//                                     onBlur={handleBlur}
-//                                     value={values.cel} />
-//                                 <label for="floatingInput">Cel</label>
-//                             </div>
-//                             <label className='styleErrors divForm'>
-//                                 {errors.cel && touched.cel && errors.cel}
-//                             </label>
-
-//                             <div className="form-floating mb-3 divForm">
-//                                 <input type="password" className="form-control" id="floatingInput"
-//                                     name="password"
-//                                     onChange={handleChange}
-//                                     onBlur={handleBlur}
-//                                     value={values.password} />
-//                                 <label for="floatingInput">Password</label>
-//                             </div>
-//                             <label className='styleErrors divForm'>
-//                                 {errors.password && touched.password && errors.password}
-//                             </label>
-
-
-//                             <div className="d-grid gap-2 col-6 mx-auto">
-//                                 <button className="btn btn-primary" type="submit" disabled={isSubmitting}>Create User</button>
-//                             </div>
-//                         </form>
-//                     )}
-//                 </Formik>
-//             </div>
-//         </>
-//     )
-// }
-
-// export default Resgister
-
 const validate = values => {
     const errors = {};
+
     if (!values.firstName) {
         errors.firstName = 'Required field';
     } else if (values.firstName.length > 10) {
@@ -156,6 +44,8 @@ const validate = values => {
 };
 
 const Resgister = () => {
+    let navigate = useNavigate();
+
     const formik = useFormik({
         initialValues: {
             firstName: '',
@@ -170,22 +60,6 @@ const Resgister = () => {
         },
     });
 
-    // GET USER INFO
-    const getUserInfo = async () => {
-        const url = `http://localhost:3000/api/`;
-        const response = await fetch(url, {
-            method: 'GET',
-            mode: 'no-cors',
-            headers: {
-                Accept: 'application/json',
-
-            },
-        });
-        const data = await response.json();
-        console.log(data);
-
-    }
-
     // POST USER INFO
     const postUserInfo = async (values) => {
         const requestOptions = {
@@ -194,11 +68,12 @@ const Resgister = () => {
             body: JSON.stringify({
                 firstName: values.firstName,
                 lastName: values.lastName,
-                emal: values.email,
+                email: values.email,
                 cellphone: values.cellphone,
                 password: values.password
             })
         };
+        
         fetch('http://localhost:3000/api', requestOptions)
             .then(response => {
                 if (response.status === 500) {
@@ -209,11 +84,16 @@ const Resgister = () => {
                 if (response.status === 200) {
                     alertify.alert('Succes', 'User registered!', function () {
                         alertify.success('Create user success');
+                        return navigate("/login");
                     });
                 }
             })
             .catch(error => console.error(error))
     }
+    const login = () => {
+        return navigate("/login");
+    }
+
     return (
         <>
             <div className="boxTitle headerForm">
@@ -284,6 +164,10 @@ const Resgister = () => {
 
                         <div className="d-grid gap-2 col-6 mx-auto">
                             <button className="btn btn-primary " type="submit">Create User</button>
+                        </div>
+                        <br />
+                        <div className="d-grid gap-2 col-6 mx-auto">
+                            <button className="btn btn-primary " type="button" onClick={login}>Login</button>
                         </div>
                     </form>
                 </div>

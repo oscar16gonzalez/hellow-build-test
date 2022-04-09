@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik';
+
 import logo from './padlock.png';
 import './Login.css';
 
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 
-import queryString from 'query-string';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 const Login = () => {
+    let navigate = useNavigate();
 
     const validate = values => {
         const errors = {};
@@ -25,32 +27,34 @@ const Login = () => {
         initialValues: { email: '' },
         validate,
         onSubmit: values => {
-            getUserByEmail()
+            getUserByEmail(values)
         },
     });
-
 
     const getUserByEmail = async (values) => {
         const requestOptions = {
             method: 'GET',
             headers: { Accept: 'application/json' },
         };
-        const idUser = '6250799b9e6a0236158ea704'
+        const idUser = values.email
         fetch(`http://localhost:3000/api/${idUser}`, requestOptions)
             .then(response => {
-                if (response.status === 500) {
+                if (response.status === 400) {
                     alertify.alert('Error', 'User not found, please register ', function () {
                         alertify.error('Error Login');
+                        register()
                     });
                 }
                 if (response.status === 200) {
-                    alertify.alert('Succes', 'User registered!', function () {
-                        alertify.success('Create Success');
-                        window.location = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_PUBLIC_CLIENT}`
-                    });
+                    alertify.success('User Validated Successfully');
+                    window.location = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_PUBLIC_CLIENT}`
                 }
             })
             .catch(error => console.error(error))
+    }
+
+    const register = () => {
+        return navigate("/register");
     }
 
     return (
@@ -75,27 +79,19 @@ const Login = () => {
                                     <input type="text" className="form-control divForm" id="email"
                                         name="email"
                                         onChange={formik.handleChange}
-                                        // onBlur={formik.handleBlur}
+                                        onBlur={formik.handleBlur}
                                         value={formik.values.email} />
                                     <label className='styleErrors'>
                                         {formik.errors.email ? <div>{formik.errors.email}</div> : null}
                                     </label>
                                 </div>
 
-                                <div className='containerForm'>
-                                    <label htmlFor="password" className='divForm labelForm'>Password</label>
-                                    <input type="password" className="form-control divForm" id="password"
-                                        name="password"
-                                        onChange={formik.handleChange}
-                                        // onBlur={formik.handleBlur}
-                                        value={formik.values.password} />
-                                    <label className='styleErrors'>
-                                        {formik.errors.password ? <div>{formik.errors.password}</div> : null}
-                                    </label>
-                                </div>
-
                                 <div className="d-grid gap-2 col-6 mx-auto">
-                                    <button className="btn btn-primary " type="button" onClick={getUserByEmail}>Login</button>
+                                    <button className="btn btn-primary " type="submit">Login</button>
+                                </div>
+                                <br />
+                                <div className="d-grid gap-2 col-6 mx-auto">
+                                    <button className="btn btn-primary " type="button" onClick={register}>Register</button>
                                 </div>
                             </form>
                         </div>

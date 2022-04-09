@@ -7,6 +7,7 @@ import { MainRoute } from './Router/MainRoute';
 function App() {
   return (
     <MainRoute>
+      <Resgister />
       <Login />
     </MainRoute>
   );

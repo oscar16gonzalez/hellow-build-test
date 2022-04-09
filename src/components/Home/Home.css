@@ -1,0 +1,34 @@
+.cardHome {
+    top: 90px;
+}
+
+.logo{
+    width: 20%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.divBtn{
+    width: 20%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.logoRpo{
+    width: 20%;
+}
+
+title {
+    font-size: 20px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.headerTable {
+    text-align: center;
+}
+
+.nameRepo {
+    width: 20%;
+    background-color: aquamarine;
+}

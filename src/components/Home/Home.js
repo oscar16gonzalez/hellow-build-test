@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import queryString from 'query-string';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import { FaArrowAltCircleDown, FaArrowCircleRight, FaBars, FaCheckDouble, FaRegArrowAltCircleDown, FaStar } from 'react-icons/fa';
+
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
+
+import logoGit from './git.webp';
+import logoRepo from './repo.png';
+import './Home.css';
 
 
 const Home = () => {
+    let navigate = useNavigate();
+
     const currentLocarion = useLocation()
     const { code } = queryString.parse(currentLocarion.search)
 
@@ -30,7 +41,6 @@ const Home = () => {
     }
 
     const getUserRepo = async () => {
-        console.log("GIT TOKEN", gitToken);
         if (localStorage.getItem('gitToken')) {
             const url = 'https://api.github.com/user/repos';
             const response = await fetch(url, {
@@ -42,7 +52,6 @@ const Home = () => {
             });
             repos = await response.json();
             setRepo(repos)
-            console.log(repo);
         }
     }
 
@@ -50,22 +59,52 @@ const Home = () => {
         getUserInfo()
     }, [])
 
-    const fav = (id) => {
-        console.log("LLEGA ID");
-        console.log(id);
+    const fav = (repo) => {
+        console.log(repo);
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: repo.name,
+                html_url: repo.html_url,
+                full_name: repo.full_name,
+                id: repo.id,
+            })
+        };
+
+        fetch('http://localhost:3000/api/repo/addRepo/', requestOptions)
+            .then(response => {
+                if (response.status === 500) {
+                    alertify.alert('Error', 'Failed to added repository', function () {
+                        alertify.error('Error');
+                    });
+                }
+                if (response.status === 200) {
+                    alertify.alert('Succes', 'Repository added successfully', function () {
+                        alertify.success('Added successfully');
+                    });
+                }
+            })
+            .catch(error => console.error(error))
+    }
+
+    const redirect = () => {
+        return navigate("/favorites");
     }
 
     return (
         <div>
-            <div className="card boxTitle shadow-lg p-3 mb-5 bg-white rounded">
-                <li className="list-group-item active">Here You can find your GitRepos</li>
-                <table className="table">
-                    <thead>
+            <div className="card boxTitle shadow-lg p-3 mb-5 bg-white rounded cardHome">
+                <img src={logoGit} className="logo" alt="logo" />
+                <div className="card-body divBtn">
+                    <button className="btn btn-warning btn-sm" onClick={redirect}>FAVS</button>
+                </div>
+                <table className="table table-dark">
+                    <thead className="thead-dark">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">name</th>
-                            <th scope="col">URL</th>
-                            <th scope="col">fullName</th>
+                            <th className='headerTable' scope="col">name</th>
+                            <th className='headerTable' scope="col">URL</th>
+                            <th className='headerTable' scope="col">fullName</th>
                         </tr>
                     </thead>
                 </table>
@@ -76,25 +115,21 @@ const Home = () => {
                                 <table className="table">
                                     <tbody>
                                         <tr>
-                                            <th scope="row">*</th>
-                                            <td>{rep.name}</td>
+                                            <button className="btn"><FaBars /></button>
+                                            <td className='nameRepo'>{rep.name}</td>
                                             <td>{rep.html_url}</td>
                                             <td>{rep.full_name}</td>
-                                            <button onClick={fav.bind(null, rep.id)}>FAV</button>
+                                            <button className="btn" onClick={fav.bind(null, rep)} ><FaStar /></button>
                                         </tr>
-
                                     </tbody>
                                 </table>
-                                {/* <h3>{rep.name} - {rep.html_url} - {rep.full_name}</h3> */}
                             </>
                         ))
-                        : <h1>Getting repos ...</h1>
+                        : <h1 className='headerTable'>Load repository ...</h1>
                 }
             </div>
         </div>
     )
 }
-
-
 
 export default Home
