@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+// import React, { useEffect, useState } from 'react'
 import queryString from 'query-string';
 import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 
 import { FaArrowAltCircleDown, FaArrowCircleRight, FaBars, FaCheckDouble, FaRegArrowAltCircleDown, FaStar } from 'react-icons/fa';
 
@@ -17,43 +18,46 @@ const Home = () => {
 
     const currentLocarion = useLocation()
     const { code } = queryString.parse(currentLocarion.search)
-
-    let gitToken;
-    let repos;
+    const [loading, setLoading] = useState(false);
 
     const [repo, setRepo] = useState([]);
-
-    const getUserInfo = async () => {
-        const url = `/access_token?client_id=${process.env.REACT_APP_PUBLIC_CLIENT}&client_secret=${process.env.REACT_APP_PRIVATE_CLIENT}&code=${code}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                Accept: 'application/json',
-            },
-        });
-        const data = await response.json();
-        gitToken = data.access_token
-        localStorage.setItem('gitToken', gitToken)
-
-        getUserRepo()
-
-    }
-
-    const getUserRepo = async () => {
-        if (localStorage.getItem('gitToken')) {
-            const url = 'https://api.github.com/user/repos';
+    const getUserInfo = useCallback(async () => {
+        setLoading(true);
+        const userCode = localStorage.getItem("userCode");
+        if (userCode !== code) {
+            const url = `/access_token?client_id=${process.env.REACT_APP_PUBLIC_CLIENT}&client_secret=${process.env.REACT_APP_PRIVATE_CLIENT}&code=${code}`;
             const response = await fetch(url, {
-                method: 'GET',
+                method: "POST",
+                mode: "no-cors",
                 headers: {
-                    Accept: 'application/json',
-                    Authorization: `token ${localStorage.getItem('gitToken')}`
+                    Accept: "application/json",
                 },
             });
-            repos = await response.json();
-            setRepo(repos)
+            localStorage.setItem("userCode", code);
+            const data = await response.json();
+            localStorage.setItem("gitToken", data.access_token);
         }
-    }
+        getUserRepo();
+    }, []);
+
+    const getUserRepo = useCallback(async () => {
+        const gitToken = localStorage.getItem("gitToken");
+        const url = "https://api.github.com/user/repos";
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                Authorization: `token ${gitToken}`,
+            },
+        });
+        const repos = await response.json();
+        if (repos?.message !== "Bad credentials") {
+            setRepo(repos);
+        } else {
+            alertify.error("Error get repositories from github");
+        }
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
         getUserInfo()
@@ -80,9 +84,11 @@ const Home = () => {
                     });
                 }
                 if (response.status === 200) {
-                    alertify.alert('Succes', 'Repository added successfully', function () {
-                        alertify.success('Added successfully');
-                    });
+                    alertify.confirm(`Do you want to add ${repo.name} to your favorites?`,
+                        function () {
+                            alertify.success('Added successfully');
+                        },
+                    );
                 }
             })
             .catch(error => console.error(error))

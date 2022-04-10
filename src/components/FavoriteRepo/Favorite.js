@@ -7,6 +7,9 @@ import logoGit from './git.webp';
 import '../../../src/components/Home/Home.css';
 import './Favorite.css';
 
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
+
 function Favorite() {
     let navigate = useNavigate();
     const [repo, setRepo] = useState([]);
@@ -37,6 +40,15 @@ function Favorite() {
         });
         const repos = await response.json();
         console.log(repos);
+
+        if (response.status === 200) {
+            alertify.confirm(`Are you sure you want to delete ${repo.name}?`,
+                function () {
+                    alertify.success('Delete repo');
+                    window.location.replace('http://localhost:3001/favorites');
+                },
+            );
+        }
     }
 
     const redirect = () => {
@@ -54,10 +66,10 @@ function Favorite() {
                 <div className='titleFav'>
                     <h4 className="card-title">Favorites Repo</h4>
                 </div>
-                <button className="btn btn-danger btn-sm btnClose" onClick={redirectBack}>
+                <button className="btn btn-danger btn-sm btnClose" onClick={redirect}>
                     <FaArrowCircleRight />
                 </button>
-                <button className="btn btn-danger btn-sm btnBack" onClick={redirect}>
+                <button className="btn btn-danger btn-sm btnBack" onClick={redirectBack}>
                     <FaArrowCircleLeft />
                 </button>
                 <table className="table table-dark">
